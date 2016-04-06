@@ -79,7 +79,10 @@
                     "dest-filename": "Makefile"
                 }
             ],
-            "env" : { "PKG_CONFIG_PATH": "/app/lib/pkgconfig" }
+            "env" : {
+                "PKG_CONFIG_PATH": "/app/lib/pkgconfig",
+                "LDFLAGS": "-lssp"
+            }
         }
     ]
 }

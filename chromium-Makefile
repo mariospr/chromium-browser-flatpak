@@ -1,6 +1,7 @@
 all:
-	./build/gyp_chromium -Dffmpeg_branding=Chrome -Duse_third_party_translations=0 -Drelease_extra_cflags='-g1' -Dwerror= -Dsysroot= -Dlinux_use_bundled_binutils=0 -Dlinux_link_gsettings=1 -Ddisable_nacl=1 -Dlinux_use_gold_binary=0 -Dlinux_use_gold_flags=0 -Denable_webrtc=1 -Duse_aura=1 -Denable_hidpi=1 -Denable_touch_ui=1 -Denable_hangout_services_extension=1 -Denable_widevine=1 -Denable_pepper_cdms=1 -Dclang=0 -Dclang_use_chrome_plugins=0 -Duse_allocator=none -Ddisable_sse2=1 -Dremove_webcore_debug_symbols=1 -Dlinux_dump_symbols=1 -Dlogging_like_official_build=1 -Duse_gnome_keyring=1 -Dlinux_link_gnome_keyring=1 -Duse_gconf=0 -Duse_gio=1 -Dcomponent=shared_library -Dproprietary_codecs=1 -Denable_hangout_services_extension=1 -Duse_gnome_keyring=0 -Duse_libpci=0 --depth=`pwd`
-	ninja -j4 -C out/Release chrome
+	LDFLAGS="${LDFLAGS} -lssp" ./build/gyp_chromium -Dffmpeg_branding=Chrome -Duse_third_party_translations=0 -Drelease_extra_cflags='-g1' -Dwerror= -Dsysroot= -Dlinux_use_bundled_binutils=0 -Dlinux_link_gsettings=1 -Ddisable_nacl=1 -Dlinux_use_gold_binary=0 -Dlinux_use_gold_flags=0 -Denable_webrtc=1 -Duse_aura=1 -Denable_hidpi=1 -Denable_touch_ui=1 -Denable_hangout_services_extension=1 -Denable_widevine=1 -Denable_pepper_cdms=1 -Dclang=0 -Dclang_use_chrome_plugins=0 -Duse_allocator=none -Ddisable_sse2=1 -Dremove_webcore_debug_symbols=1 -Dlinux_dump_symbols=1 -Dlogging_like_official_build=1 -Duse_gnome_keyring=1 -Dlinux_link_gnome_keyring=1 -Duse_gconf=0 -Duse_gio=1 -Dcomponent=shared_library -Dproprietary_codecs=1 -Denable_hangout_services_extension=1 -Duse_gnome_keyring=0 -Duse_libpci=0 --depth=`pwd`
+	ninja -v -j4 -C out/Release chrome
 
 install:
 	cp -aR out/Release/chrome /app/bin
+
