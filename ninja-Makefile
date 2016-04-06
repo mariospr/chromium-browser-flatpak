@@ -1,0 +1,9 @@
+all: ninja
+
+ninja:
+	./configure.py --bootstrap
+
+
+install: ninja
+	mkdir -p /app/bin
+	cp ninja /app/bin

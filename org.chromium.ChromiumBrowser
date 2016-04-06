@@ -1,0 +1,85 @@
+{
+    "app-id": "org.chromium.ChromiumBrowser",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "master",
+    "sdk": "org.gnome.Sdk",
+    "command": "chromium-browser",
+    "finish-args": [
+        /* X11 + XShm access */
+        "--share=ipc", "--socket=x11",
+        /* OpenGL access */
+        "--device=dri",
+        /* Needs to talk to the network: */
+        "--share=network",
+        /* Play sounds */
+        "--socket=pulseaudio",
+        /* Allow using the HTML5 Geolocation API */
+        "--system-talk-name=org.freedesktop.GeoClue2",
+        /* Needed for dconf to work */
+        "--filesystem=xdg-run/dconf", "--filesystem=~/.config/dconf:ro",
+        "--talk-name=ca.desrt.dconf", "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
+    ],
+    "build-options" : {
+        "cflags": "-O2 -g",
+        "cxxflags": "-O2 -g",
+        "env": {
+            "V": "1"
+        }
+    },
+    "cleanup": [],
+    "modules": [
+        {
+            "name": "ninja",
+            "no-autogen": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/ninja-build/ninja.git"
+                },
+                {
+                    "type": "file",
+                    "path": "ninja-Makefile",
+                    "dest-filename": "Makefile"
+                }
+            ]
+        },
+        {
+            "name": "lspci",
+            "no-autogen": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://git.kernel.org/pub/scm/utils/pciutils/pciutils.git"
+                }
+            ],
+            "make-args": [ "SHARED=yes" ],
+            "make-install-args" : ["PREFIX=/app"],
+            "post-install": [
+	        "mkdir -p /app/lib/pkgconfig",
+	        "mkdir -p /app/include/pci",
+	        "mkdir -p /app/lib",
+	        "install -m 644 lib/pci.h lib/header.h lib/config.h lib/types.h /app/include/pci",
+	        "install -m 644 lib/libpci.pc /app/lib/pkgconfig",
+	        "install -m 644 lib/libpci.so* /app/lib",
+	        "ln -s /app/lib/libpci.so.3.2.1 /app/lib/libpci.so",
+	        "ln -s /app/lib/libpci.so.3.2.1 /app/lib/libpci.so.3"
+            ]
+        },
+        {
+            "name": "chromium",
+            "no-autogen": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git@github.com:endlessm/chromium-browser.git"
+                },
+                {
+                    "type": "file",
+                    "path": "chromium-Makefile",
+                    "dest-filename": "Makefile"
+                }
+            ],
+            "env" : { "PKG_CONFIG_PATH": "/app/lib/pkgconfig" }
+        }
+    ]
+}
