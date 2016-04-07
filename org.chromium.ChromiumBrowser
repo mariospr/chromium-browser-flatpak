@@ -90,8 +90,7 @@
                 }
             ],
             "env" : {
-                "PKG_CONFIG_PATH": "/app/lib/pkgconfig",
-                "LDFLAGS": "-lssp"
+                "PKG_CONFIG_PATH": "/app/lib/pkgconfig"
             }
         }
     ]
