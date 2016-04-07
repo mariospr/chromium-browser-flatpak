@@ -20,7 +20,6 @@ all:
 		-Dlinux_use_gold_flags=0 \
 		-Dlogging_like_official_build=1 \
 		-Dproprietary_codecs=1 \
-		-Drelease_extra_cflags='-g1' \
 		-Dremove_webcore_debug_symbols=1 \
 		-Duse_allocator=none \
 		-Duse_aura=1 \
