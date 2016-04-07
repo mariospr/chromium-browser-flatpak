@@ -42,7 +42,6 @@ Instructions:
 (5) Run chromium-browser as an xdg-app:
 ```
   xdg-app run org.chromium.ChromiumBrowser
-  xdg-app build-bundle /path/to/your/xdg-app/repo chromium-browser.bundle org.chromium.ChromiumBrowser
 ```
 
 Note that if you do further changes in the `appdir` (e.g. to the metadata), you'll need to re-publish it in your local repo and update before running it again:
