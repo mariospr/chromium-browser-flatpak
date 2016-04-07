@@ -26,7 +26,13 @@
             "V": "1"
         }
     },
-    "cleanup": [],
+    "cleanup": [
+        "/include",
+        "/lib/pkgconfig",
+        "/share/pkgconfig",
+        "/share/aclocal",
+        "/man"
+    ],
     "modules": [
         {
             "name": "ninja",
