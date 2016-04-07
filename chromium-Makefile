@@ -32,5 +32,5 @@ all:
 	ninja -v -j12 -C out/Release chrome
 
 install:
-	cp -aR out/Release/chrome /app/bin
+	cp -aR out/Release/chrome /app/bin/chromium-browser
 
