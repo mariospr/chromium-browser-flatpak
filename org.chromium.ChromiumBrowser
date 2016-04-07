@@ -88,10 +88,7 @@
                     "path": "chromium-Makefile",
                     "dest-filename": "Makefile"
                 }
-            ],
-            "env" : {
-                "PKG_CONFIG_PATH": "/app/lib/pkgconfig"
-            }
+            ]
         }
     ]
 }
