@@ -3,7 +3,6 @@ all:
 	./build/gyp_chromium \
 		-Dclang=0 \
 		-Dclang_use_chrome_plugins=0 \
-		-Dcomponent=shared_library \
 		-Ddisable_nacl=1 \
 		-Ddisable_sse2=1 \
 		-Denable_hangout_services_extension=1 \
