@@ -77,8 +77,9 @@ usage () {
   echo " See 'man chromium-browser' for more details"
 }
 
-# Work around crbug.com/415681
-lsmod |grep ^i915\  >/dev/null && export LIBGL_DRI3_DISABLE=1
+# Work around crbug.com/415681 (without using lsmod)
+# lsmod |grep ^i915\  >/dev/null && export LIBGL_DRI3_DISABLE=1
+export LIBGL_DRI3_DISABLE=1
 
 if [ -f /etc/$APPNAME/default ] ; then
   . /etc/$APPNAME/default
@@ -222,15 +223,18 @@ else
   # Try to poke an existing chromium process through the unix socket. If this
   # succeeds and we get "ACK" back, exit this script. Otherwise keep going as
   # normal.
-  hexargs=""
-  for arg in "START" "$(pwd)" $LIBDIR/$APPNAME $CHROMIUM_FLAGS "$@"
-  do
-    hexargs="$hexargs$(echo -ne "\0$arg" | xxd -p)"
-  done
+  # hexargs=""
+  # for arg in "START" "$(pwd)" $LIBDIR/$APPNAME $CHROMIUM_FLAGS "$@"
+  # do
+  #   hexargs="$hexargs$(echo -ne "\0$arg" | xxd -p)"
+  # done
 
-  if echo $hexargs | sed "s/^00//" | xxd -r -p | nc -U "$HOME/.config/chromium/SingletonSocket" 2> /dev/null | grep "^ACK$" > /dev/null; then
-    exit 0
-  fi
+  # if echo $hexargs | sed "s/^00//" | xxd -r -p | nc -U "$HOME/.config/chromium/SingletonSocket" 2> /dev/null | grep "^ACK$" > /dev/null; then
+  #   exit 0
+  # fi
+
+  # Dummy implementation not to depend on xxd for now
+  pidof ${APPNAME} > /dev/null && exit 0
 
   if [ $want_temp_profile -eq 0 ] ; then
     exec $LIBDIR/$APPNAME $CHROMIUM_FLAGS "$@"
