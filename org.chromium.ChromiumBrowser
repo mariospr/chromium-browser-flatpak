@@ -4,6 +4,8 @@
     "runtime-version": "master",
     "sdk": "org.gnome.Sdk",
     "command": "chromium-browser",
+    "rename-desktop-file": "chromium-browser.desktop",
+    "rename-icon": "chromium-browser",
     "finish-args": [
         /* X11 + XShm access */
         "--share=ipc", "--socket=x11",
@@ -93,6 +95,18 @@
                     "type": "file",
                     "path": "chromium-Makefile",
                     "dest-filename": "Makefile"
+                },
+                {
+                    "type": "file",
+                    "path": "chromium-browser.desktop"
+                },
+                {
+                    "type": "file",
+                    "path": "chromium-browser.sh"
+                },
+                {
+                    "type": "file",
+                    "path": "chromium-browser.svg"
                 }
             ]
         }
