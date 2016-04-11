@@ -133,25 +133,26 @@ fi
 export CHROME_WRAPPER="`readlink -f "$0"`"
 export CHROME_DESKTOP=$APPNAME.desktop
 
-# lsb_release is slow so try to source the static file /etc/lsb-release instead
-if [ -e /etc/lsb-release ] ; then
-  . /etc/lsb-release
-fi
-# Fall back to lsb_release if we didn't get the information we need
-if test -z "${DISTRIB_ID:-}"; then
-	DIST=$(lsb_release -si)
-	RELEASE=$(lsb_release -sr)
-else
-	DIST=${DISTRIB_ID}
-	RELEASE=${DISTRIB_RELEASE}
-fi
+# FIXME: We don't need this for now
+# # lsb_release is slow so try to source the static file /etc/lsb-release instead
+# if [ -e /etc/lsb-release ] ; then
+#   . /etc/lsb-release
+# fi
+# # Fall back to lsb_release if we didn't get the information we need
+# if test -z "${DISTRIB_ID:-}"; then
+# 	DIST=$(lsb_release -si)
+# 	RELEASE=$(lsb_release -sr)
+# else
+# 	DIST=${DISTRIB_ID}
+# 	RELEASE=${DISTRIB_RELEASE}
+# fi
 
-# Set CHROME_VERSION_EXTRA visible in the About dialog and in about:version
-if [ "$DIST $RELEASE" = "$BUILD_DIST" ] ; then
-  export CHROME_VERSION_EXTRA="$DIST $RELEASE"
-else
-  export CHROME_VERSION_EXTRA="Built on $BUILD_DIST, running on $DIST $RELEASE"
-fi
+# # Set CHROME_VERSION_EXTRA visible in the About dialog and in about:version
+# if [ "$DIST $RELEASE" = "$BUILD_DIST" ] ; then
+#   export CHROME_VERSION_EXTRA="$DIST $RELEASE"
+# else
+#   export CHROME_VERSION_EXTRA="Built on $BUILD_DIST, running on $DIST $RELEASE"
+# fi
 
 want_touch_pinch=1
 want_debug=0
