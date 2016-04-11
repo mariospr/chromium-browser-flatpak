@@ -1,3 +1,11 @@
+SRC_DIR=/run/build/chromium
+BUILD_DIR=$(SRC_DIR)/out/Release
+
+LIB_DIR=/app/lib/chromium-browser
+BIN_DIR=/app/bin
+DATA_DIR=/app/share
+ICONS_DIR=$(DATA_DIR)/icons
+
 all:
 	LDFLAGS="${LDFLAGS} -lssp" \
 	./build/gyp_chromium \
@@ -25,8 +33,53 @@ all:
 		-Duse_third_party_translations=0 \
 		-Dwerror= \
 		--depth=`pwd`
-	ninja -v -j12 -C out/Release chrome
+	ninja -v -j12 -C out/Release chrome chrome_sandbox
 
+install: TRASH := .deps gen obj.host obj.target \*.lock obj build.\* .landmines mksnapshot.ia32 protoc pyproto re2c resources xdg-mime yasm \*.TOC \*.stamp product_logo_\*png gen\* lib/\* lib libvpx_obj_int_extract .ninja\* chrome-wrapper \*.breakpad.\* java_mojo dump_syms
 install:
-	cp -aR out/Release/chrome /app/bin/chromium-browser
+	@set -eux
+
+	mkdir -p $(LIB_DIR)
+
+	# Install most of the useful files now
+	(cd $(BUILD_DIR); tar cf - . $(foreach excl,$(TRASH),--exclude=$(excl) );) | (cd $(LIB_DIR); tar xvf -;)
+
+	# For non-static build only
+	if [ -d $(BUILD_DIR)/lib ]; then \
+	  mkdir -p "$(LIB_DIR)/libs"; \
+	  cp -aR $(BUILD_DIR)/lib/*.so "$(LIB_DIR)/libs"; \
+	fi
+
+	# Icons
+	mkdir -p $(DATA_DIR)/pixmaps
+	cp -a $(SRC_DIR)/chrome/app/theme/chromium/product_logo_48.png $(DATA_DIR)/pixmaps/chromium-browser.png
+	for size in 22 24 32 48 64 128 256 ; do \
+	  if test -f "$(SRC_DIR)/chrome/app/theme/chromium/product_logo_$$size.png"; then \
+	    mkdir -p $(DATA_DIR)/icons/hicolor/$${size}x$${size}/apps ; \
+	    cp -a $(SRC_DIR)/chrome/app/theme/chromium/product_logo_$$size.png  \
+	      $(DATA_DIR)/icons/hicolor/$${size}x$${size}/apps/chromium-browser.png ; \
+	  else \
+	    echo "There is no size $${size} icon. We expected one."; \
+	  fi; \
+	done
+
+	mkdir -p $(DATA_DIR)/icons/hicolor/scalable/apps
+	cp -a $(SRC_DIR)/chromium-browser.svg $(DATA_DIR)/icons/hicolor/scalable/apps
+
+	# Rename the binary from chrome to chromium-browser, this is required as
+	# chromium dereferences all symlinks before starting its children making
+	# the Gnome System Monitor confused with icons
+	mv $(LIB_DIR)/chrome $(LIB_DIR)/chromium-browser
+
+	# "you have to change the underscore from the build target into a hyphen".
+	# https://code.google.com/p/chromium/wiki/LinuxSUIDSandbox
+	mv $(LIB_DIR)/chrome_sandbox $(LIB_DIR)/chrome-sandbox
+	chmod 4755 $(LIB_DIR)/chrome-sandbox
+
+	# Desktop file
+	mkdir -p $(DATA_DIR)/applications
+	cp -a $(SRC_DIR)/chromium-browser.desktop $(DATA_DIR)/applications
+
+	# Launcher script
+	install -m 755 $(SRC_DIR)/chromium-browser.sh $(BIN_DIR)/chromium-browser
 
