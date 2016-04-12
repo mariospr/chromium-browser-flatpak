@@ -1,0 +1,94 @@
+From 1af971af2d35f1c3c3f485ed8d98fa2d74b26e27 Mon Sep 17 00:00:00 2001
+From: Mario Sanchez Prada <mario@mariospr.org>
+Date: Tue, 12 Apr 2016 13:08:10 +0100
+Subject: [PATCH] Fix build for with -Duse_udev=0
+
+This is not a proper fix, but a temporary measure to get to build chromium.
+---
+ .../api/image_writer_private/removable_storage_provider_linux.cc     | 5 +++++
+ components/storage_monitor/storage_monitor.cc                        | 2 ++
+ device/serial/serial_service_impl.cc                                 | 2 ++
+ extensions/browser/api/serial/serial_api.cc                          | 2 ++
+ 4 files changed, 11 insertions(+)
+
+diff --git a/chrome/browser/extensions/api/image_writer_private/removable_storage_provider_linux.cc b/chrome/browser/extensions/api/image_writer_private/removable_storage_provider_linux.cc
+index 3cc3ff9..1f3b60c 100644
+--- a/chrome/browser/extensions/api/image_writer_private/removable_storage_provider_linux.cc
++++ b/chrome/browser/extensions/api/image_writer_private/removable_storage_provider_linux.cc
+@@ -6,7 +6,10 @@
+ #include "base/strings/string_number_conversions.h"
+ #include "chrome/browser/extensions/api/image_writer_private/removable_storage_provider.h"
+ #include "content/public/browser/browser_thread.h"
++
++#if defined(USE_UDEV)
+ #include "device/udev_linux/scoped_udev.h"
++#endif
+ 
+ namespace extensions {
+ // TODO(haven): Udev code may be duplicated in the Chrome codebase.
+@@ -42,6 +45,7 @@ static int get_device_blk_size(const std::string& path) {
+ 
+ bool RemovableStorageProvider::PopulateDeviceList(
+     scoped_refptr<StorageDeviceList> device_list) {
++#if defined(USE_UDEV)
+   device::ScopedUdevPtr udev(device::udev_new());
+   if (!udev) {
+     DLOG(ERROR) << "Can't create udev";
+@@ -104,6 +108,7 @@ bool RemovableStorageProvider::PopulateDeviceList(
+ 
+     device_list->data.push_back(device_item);
+   }
++#endif
+ 
+   return true;
+ }
+diff --git a/components/storage_monitor/storage_monitor.cc b/components/storage_monitor/storage_monitor.cc
+index e571dd2..8af54e8 100644
+--- a/components/storage_monitor/storage_monitor.cc
++++ b/components/storage_monitor/storage_monitor.cc
+@@ -52,7 +52,9 @@ void StorageMonitor::ReceiverImpl::MarkInitialized() {
+ // static
+ void StorageMonitor::Create() {
+   delete g_storage_monitor;
++#if defined(USE_UDEV)
+   g_storage_monitor = CreateInternal();
++#endif
+ }
+ 
+ // static
+diff --git a/device/serial/serial_service_impl.cc b/device/serial/serial_service_impl.cc
+index 98ae1e0..ea4e2ca 100644
+--- a/device/serial/serial_service_impl.cc
++++ b/device/serial/serial_service_impl.cc
+@@ -72,8 +72,10 @@ void SerialServiceImpl::Connect(
+ }
+ 
+ SerialDeviceEnumerator* SerialServiceImpl::GetDeviceEnumerator() {
++#if defined(USE_UDEV)
+   if (!device_enumerator_)
+     device_enumerator_ = SerialDeviceEnumerator::Create();
++#endif
+   return device_enumerator_.get();
+ }
+ 
+diff --git a/extensions/browser/api/serial/serial_api.cc b/extensions/browser/api/serial/serial_api.cc
+index de70d1a..c00f924 100644
+--- a/extensions/browser/api/serial/serial_api.cc
++++ b/extensions/browser/api/serial/serial_api.cc
+@@ -85,11 +85,13 @@ bool SerialGetDevicesFunction::Prepare() {
+ void SerialGetDevicesFunction::Work() {
+   DCHECK_CURRENTLY_ON(BrowserThread::FILE);
+ 
++#if defined(USE_UDEV)
+   scoped_ptr<device::SerialDeviceEnumerator> enumerator =
+       device::SerialDeviceEnumerator::Create();
+   mojo::Array<device::serial::DeviceInfoPtr> devices = enumerator->GetDevices();
+   results_ = serial::GetDevices::Results::Create(
+       devices.To<std::vector<linked_ptr<serial::DeviceInfo> > >());
++#endif
+ }
+ 
+ SerialConnectFunction::SerialConnectFunction() {
+-- 
+2.7.0
+

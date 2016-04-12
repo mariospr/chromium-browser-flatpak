@@ -32,6 +32,7 @@ all:
 		-Duse_gio=1 \
 		-Duse_gnome_keyring=0 \
 		-Duse_third_party_translations=0 \
+		-Duse_udev=0 \
 		-Dwerror= \
 		--depth=`pwd`
 	ninja -v -j12 -C out/Release chrome chrome_sandbox

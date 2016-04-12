@@ -107,6 +107,10 @@
                 {
                     "type": "file",
                     "path": "chromium-browser.svg"
+                },
+                {
+                    "type": "patch",
+                    "path": "0001-Fix-build-for-with-Duse_udev-0.patch"
                 }
             ]
         }
