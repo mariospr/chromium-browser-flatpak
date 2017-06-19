@@ -37,9 +37,9 @@ Instructions:
   flatpak --user remote-add --no-gpg-verify chromium-repo /path/to/your/flatpak/repo
   flatpak --user install chromium-repo org.chromium.ChromiumBrowser
 ```
-(5) Run chromium-browser as an flatpak:
+(5) Run chromium-browser as an flatpak (needs to disable chromium's sandbox because a setuid binary won't work in flatpak):
 ```
-  flatpak run org.chromium.ChromiumBrowser
+  flatpak run org.chromium.ChromiumBrowser --no-sandbox
 ```
 
 Note that if you do further changes in the `appdir` (e.g. to the metadata), you'll need to re-publish it in your local repo and update before running it again:
